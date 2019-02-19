@@ -46,7 +46,7 @@ module Simpler
       @request.params
     end
 
-    def render(template )
+    def render(template)
       if template[:plain]
         @request.env['simpler.text'] = template[:plain]
       else
@@ -54,8 +54,8 @@ module Simpler
       end
     end
 
-    def view
-
+    def status(status)
+      @response.status = status
     end
 
   end
