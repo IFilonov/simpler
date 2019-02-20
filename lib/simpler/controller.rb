@@ -15,6 +15,7 @@ module Simpler
 
     def make_response(action)
       @request.env['simpler.controller'] = self
+      @request.env['simpler.controller_name'] = self.class
       @request.env['simpler.action'] = action
 
       set_default_headers
@@ -46,6 +47,7 @@ module Simpler
 
     def params
       @request.params.merge!(@route_param)
+      @request.env['simpler.params'] = @request.params
       @request.params
     end
 

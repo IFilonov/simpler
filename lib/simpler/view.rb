@@ -11,6 +11,7 @@ module Simpler
 
     def render(binding)
       template = File.read(template_path)
+      @env['simpler.render_view'] = "#{[controller.name, action].join('/')}.html.erb"      
       plain_text ? plain_text : ERB.new(template).result(binding)
     end
 
