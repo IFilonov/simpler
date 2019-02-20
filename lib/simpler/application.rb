@@ -29,7 +29,7 @@ module Simpler
     def call(env)
       route = @router.route_for(env)
       if (route)
-        controller = route.controller.new(env)
+        controller = route.controller.new(env, route.param_name)
         action = route.action
 
         make_response(controller, action)

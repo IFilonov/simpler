@@ -28,13 +28,23 @@ module Simpler
       route_point = route_point.split('#')
       controller = controller_from_string(route_point[0])
       action = route_point[1]
-      route = Route.new(method, path, controller, action)
-
+      route = Route.new(method, path(path), controller, action, param_name(path))
       @routes.push(route)
     end
 
     def controller_from_string(controller_name)
       Object.const_get("#{controller_name.capitalize}Controller")
+    end
+
+    private
+
+    def param_name(path)
+      param = path.split('/').last
+      param[1..-1] if param.include?(':')
+    end
+
+    def path(path)
+      path.index(':') ? path[0..path.rindex('/')] : path
     end
 
   end
