@@ -7,14 +7,17 @@ module Simpler
       def initialize(method, path, controller, action)
         @params = params(path)
         @method = method
-        @path = mask_path(path)
+        @path = path_without_params(path)
         @controller = controller
         @action = action
       end
 
       def match?(method, path, env)
-        add_params_in_env(env, path)
-        @method == method && @path == mask(path) && @params.count == split_path_count(path)
+        match = @method == method &&
+          @path == path_by_params_mask(path) &&
+          @params.count == split_path_count(path)
+        add_params_in_env(env, path) if match
+        match
       end
 
       private
@@ -33,11 +36,11 @@ module Simpler
         Hash[@params.compact.zip(params_values.compact)]
       end
 
-      def mask_path(path)
+      def path_without_params(path)
         split_path(path).map { |item| item unless item.include?(":") }.join("/")
       end
 
-      def mask(path)
+      def path_by_params_mask(path)
         path_parts = split_path(path)
         @params.map.with_index { |param, i| path_parts[i] if param.nil?}.join("/")
       end
