@@ -3,14 +3,13 @@ require_relative 'view'
 module Simpler
   class Controller
 
-    attr_reader :name, :request, :response, :route_params
+    attr_reader :name, :request, :response
 
-    def initialize(env, route_param)
+    def initialize(env)
       @name = extract_name
       @request = Rack::Request.new(env)
       @response = Rack::Response.new
-      @route_param = {}
-      @route_param[route_param.to_sym] = route_param_value(env) if route_param
+      @params = env['simpler.params']
     end
 
     def make_response(action)
@@ -46,14 +45,7 @@ module Simpler
     end
 
     def params
-      @request.params.merge!(@route_param)
-      @request.env['simpler.params'] = @request.params
-      @request.params
-    end
-
-    def route_param_value(env)
-      path = env['PATH_INFO']
-      path.split('/').last
+      @request.params.merge!(@params)
     end
 
     def render(template)

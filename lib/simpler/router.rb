@@ -18,8 +18,7 @@ module Simpler
     def route_for(env)
       method = env['REQUEST_METHOD'].downcase.to_sym
       path = env['PATH_INFO']
-
-      @routes.find { |route| route.match?(method, path) }
+      @routes.find { |route| route.match?(method, path, env) }
     end
 
     private
@@ -28,23 +27,12 @@ module Simpler
       route_point = route_point.split('#')
       controller = controller_from_string(route_point[0])
       action = route_point[1]
-      route = Route.new(method, path(path), controller, action, param_name(path))
+      route = Route.new(method, path, controller, action)
       @routes.push(route)
     end
 
     def controller_from_string(controller_name)
       Object.const_get("#{controller_name.capitalize}Controller")
-    end
-
-    private
-
-    def param_name(path)
-      param = path.split('/').last
-      param[1..-1] if param.include?(':')
-    end
-
-    def path(path)
-      path.index(':') ? path[0..path.rindex('/')] : path
     end
 
   end
